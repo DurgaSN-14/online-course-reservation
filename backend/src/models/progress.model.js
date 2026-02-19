@@ -2,6 +2,18 @@ import mongoose from "mongoose";
 
 const progressSchema = new mongoose.Schema(
   {
+    student: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+      required: true,
+    },
+
     reservation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Reservation",
@@ -29,8 +41,15 @@ const progressSchema = new mongoose.Schema(
       enum: ["in-progress", "completed"],
       default: "in-progress",
     },
+
+    certificateIssued: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
+
+progressSchema.index({ student: 1, course: 1 }, { unique: true });
 
 export default mongoose.model("Progress", progressSchema);

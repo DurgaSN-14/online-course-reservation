@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema(
   {
-    teacher: {
+    instructor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
@@ -23,6 +23,11 @@ const courseSchema = new mongoose.Schema(
       lowercase: true,
     },
 
+    category: {
+      type: String,
+      required: true,
+    },
+
     description: {
       type: String,
       required: true,
@@ -33,8 +38,15 @@ const courseSchema = new mongoose.Schema(
       required: true,
     },
 
-    skillLevel: {
+    totalLectures: {
+      type: Number,
+      default: 0,
+    },
+
+    level: {
       type: String,
+      enum: ["beginner", "intermediate", "advanced"],
+      default: "beginner",
     },
 
     discount: {
@@ -48,6 +60,11 @@ const courseSchema = new mongoose.Schema(
 
     finalFee: {
       type: Number,
+    },
+
+    studentsEnrolled: {
+      type: Number,
+      default: 0,
     },
 
     averageRating: {

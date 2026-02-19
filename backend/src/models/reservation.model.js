@@ -33,4 +33,6 @@ const reservationSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+reservationSchema.index({ student: 1, course: 1 }, { unique: true });
+
 export default mongoose.model("Reservation", reservationSchema);

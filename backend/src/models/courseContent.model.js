@@ -15,7 +15,7 @@ const courseContentSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ["video", "pdf", "document", "youtube"],
+      enum: ["video", "pdf", "document", "youtube", "quiz", "assignment"],
       required: true,
     },
 
@@ -25,6 +25,16 @@ const courseContentSchema = new mongoose.Schema(
     },
 
     order: {
+      type: Number,
+      default: 0,
+    },
+
+    maxMarks: {
+      type: Number,
+      default: 0,
+    },
+
+    weightage: {
       type: Number,
       default: 0,
     },
