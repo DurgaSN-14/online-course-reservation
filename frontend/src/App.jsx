@@ -20,6 +20,7 @@ import CreateCourse from "./pages/instructor/CreateCourse";
 import InstructorLayout from "./layouts/InstructorLayout";
 import InstructorCourses from "./pages/instructor/InstructorCourses";
 import AddCourseContent from "./pages/instructor/AddCourseContent";
+import ManageCourse from "./pages/instructor/ManageCourse";
 
 const App = () => {
   const { checkAuth } = useAuthStore();
@@ -72,9 +73,16 @@ const App = () => {
             element={<InstructorDashboard />}
           />
           <Route path="/instructor/courses" element={<InstructorCourses />} />
+          <Route path="/instructor/create-course" element={<CreateCourse />} />
+
           <Route
             path="/instructor/courses/:courseId/add-content"
             element={<AddCourseContent />}
+          />
+
+          <Route
+            path="/instructor/courses/:courseId/manage"
+            element={<ManageCourse />}
           />
         </Route>
 
@@ -89,9 +97,9 @@ const App = () => {
         />
       </Routes>
 
-      {!hideFooter && <Footer />}
+      <Toaster position="top-center" containerStyle={{ left: 130 }} />
 
-      <Toaster />
+      {!hideFooter && <Footer />}
     </>
   );
 };

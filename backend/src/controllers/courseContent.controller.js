@@ -7,8 +7,10 @@ export const addCourseContent = async (req, res) => {
     const {
       courseId,
       title,
+      description,
       type,
       contentFile,
+      thumbnailFile,
       contentUrl,
       order,
       maxMarks,
@@ -17,20 +19,33 @@ export const addCourseContent = async (req, res) => {
     } = req.body;
 
     let finalContentUrl = contentUrl || "";
+    let thumbnailUrl = "";
 
     if (contentFile) {
       const uploaded = await cloudinary.uploader.upload(contentFile, {
         folder: "online-course-system/course-contents",
+        resource_type: "auto",
       });
 
       finalContentUrl = uploaded.secure_url;
     }
 
+    if (thumbnailFile) {
+      const uploaded = await cloudinary.uploader.upload(thumbnailFile, {
+        folder: "online-course-system/course-thumbnails",
+        resource_type: "auto",
+      });
+
+      thumbnailUrl = uploaded.secure_url;
+    }
+
     const content = await CourseContent.create({
       course: courseId,
       title,
+      description,
       type,
       contentUrl: finalContentUrl,
+      thumbnail: thumbnailUrl,
       order,
       maxMarks,
       weightage,
@@ -59,8 +74,10 @@ export const updateCourseContent = async (req, res) => {
 
     const {
       title,
+      description,
       type,
       contentFile,
+      thumbnailFile,
       contentUrl,
       order,
       maxMarks,
@@ -77,6 +94,7 @@ export const updateCourseContent = async (req, res) => {
     }
 
     let finalContentUrl = content.contentUrl;
+    let thumbnailUrl = content.thumbnail;
 
     if (contentFile) {
       const uploaded = await cloudinary.uploader.upload(contentFile, {
@@ -88,12 +106,22 @@ export const updateCourseContent = async (req, res) => {
       finalContentUrl = contentUrl;
     }
 
+    if (thumbnailFile) {
+      const uploadedThumb = await cloudinary.uploader.upload(thumbnailFile, {
+        folder: "online-course-system/course-thumbnails",
+      });
+
+      thumbnailUrl = uploadedThumb.secure_url;
+    }
+
     const updatedContent = await CourseContent.findByIdAndUpdate(
       contentId,
       {
         title,
+        description,
         type,
         contentUrl: finalContentUrl,
+        thumbnail: thumbnailUrl,
         order,
         maxMarks,
         weightage,

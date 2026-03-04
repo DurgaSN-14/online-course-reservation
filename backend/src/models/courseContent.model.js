@@ -13,10 +13,20 @@ const courseContentSchema = new mongoose.Schema(
       required: true,
     },
 
+    description: {
+      type: String,
+      default: "",
+    },
+
     type: {
       type: String,
       enum: ["video", "pdf", "document", "youtube", "quiz", "assignment"],
       required: true,
+    },
+
+    thumbnail: {
+      type: String,
+      default: "",
     },
 
     contentUrl: {

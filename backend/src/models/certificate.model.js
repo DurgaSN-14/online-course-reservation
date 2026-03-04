@@ -14,18 +14,29 @@ const certificateSchema = new mongoose.Schema(
       required: true,
     },
 
-    certificateId: {
+    progress: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Progress",
+      required: true,
+    },
+
+    certificateNumber: {
       type: String,
       unique: true,
-      required: true,
     },
 
     issuedAt: {
       type: Date,
       default: Date.now,
     },
+
+    pdfUrl: {
+      type: String,
+    },
   },
   { timestamps: true },
 );
+
+certificateSchema.index({ student: 1, course: 1 }, { unique: true });
 
 export default mongoose.model("Certificate", certificateSchema);

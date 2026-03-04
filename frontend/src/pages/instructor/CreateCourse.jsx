@@ -16,6 +16,7 @@ const courseSchema = z.object({
   level: z.enum(["Beginner", "Intermediate", "Advanced"]),
   fee: z.string().min(1, "Fee required"),
   discount: z.string().optional(),
+  image: z.string().min(1, "Course image is required"),
 });
 
 const CreateCourse = () => {
@@ -27,10 +28,11 @@ const CreateCourse = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(courseSchema),
-    defaultValues: { level: "Beginner" },
+    defaultValues: { level: "Beginner", image: "" },
   });
 
   const handleImageChange = (e) => {
@@ -42,17 +44,15 @@ const CreateCourse = () => {
     reader.onloadend = () => {
       setImage(reader.result);
       setPreview(reader.result);
+
+      setValue("image", reader.result); // register image in form
     };
 
     reader.readAsDataURL(file);
   };
-  const onSubmit = async (data) => {
-    const payload = {
-      ...data,
-      image,
-    };
 
-    const res = await createCourse(payload);
+  const onSubmit = async (data) => {
+    const res = await createCourse(data);
 
     if (res.success) {
       toast.success("Course created successfully!");
@@ -205,6 +205,12 @@ const CreateCourse = () => {
                   </button>
                 </div>
               </div>
+            )}
+
+            {errors.image && (
+              <p className="text-red-500 text-sm mt-2">
+                {errors.image.message}
+              </p>
             )}
           </div>
 

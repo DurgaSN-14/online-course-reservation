@@ -2,6 +2,7 @@ import Course from "../models/course.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import CourseContent from "../models/courseContent.model.js";
 import slugify from "slugify";
+import mongoose from "mongoose";
 
 export const createCourse = async (req, res) => {
   try {

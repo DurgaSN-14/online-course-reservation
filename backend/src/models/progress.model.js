@@ -26,15 +26,18 @@ const progressSchema = new mongoose.Schema(
       default: 0,
     },
 
-    completedModules: {
-      type: Number,
-      default: 0,
-    },
-
-    totalModules: {
-      type: Number,
-      default: 0,
-    },
+    completedContents: [
+      {
+        content: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "CourseContent",
+        },
+        marksObtained: {
+          type: Number,
+          default: 0,
+        },
+      },
+    ],
 
     status: {
       type: String,

@@ -5,6 +5,7 @@ import {
   addCourseContent,
   getCourseContents,
   deleteCourseContent,
+  updateCourseContent,
 } from "../controllers/courseContent.controller.js";
 
 const router = express.Router();
@@ -17,6 +18,13 @@ router.post(
 );
 
 router.get("/:courseId", getCourseContents);
+
+router.put(
+  "/:id",
+  authMiddleware,
+  roleMiddleware("instructor", "admin"),
+  updateCourseContent,
+);
 
 router.delete(
   "/:id",

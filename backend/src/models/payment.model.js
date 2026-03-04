@@ -17,19 +17,11 @@ const paymentSchema = new mongoose.Schema(
     reservation: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Reservation",
-    },
-
-    razorpayOrderId: {
-      type: String,
       required: true,
     },
 
-    razorpayPaymentId: {
-      type: String,
-    },
-
-    razorpaySignature: {
-      type: String,
+    transactionId: {
+      type: String, // Braintree transaction id
     },
 
     amount: {
@@ -42,9 +34,13 @@ const paymentSchema = new mongoose.Schema(
       default: "INR",
     },
 
+    paymentMethod: {
+      type: String, // card / paypal / google_pay
+    },
+
     status: {
       type: String,
-      enum: ["created", "paid", "failed"],
+      enum: ["created", "success", "failed", "refunded", "voided"],
       default: "created",
     },
   },

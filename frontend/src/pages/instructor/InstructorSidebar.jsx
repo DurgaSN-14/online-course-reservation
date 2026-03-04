@@ -62,7 +62,7 @@ const InstructorSidebar = () => {
       {/* TOP */}
       <div>
         {/* LOGO */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+        <div className="flex items-center justify-between px-3 md:px-5 py-4 border-b border-white/10">
           <div className="flex items-center gap-3">
             <GraduationCap size={28} className="text-indigo-400" />
 
@@ -85,7 +85,7 @@ const InstructorSidebar = () => {
         </div>
 
         {/* NAVIGATION */}
-        <nav className="px-3 py-6 space-y-2">
+        <nav className="px-2 md:px-3 py-6 space-y-2">
           {navItems.map((item) => {
             const Icon = item.icon;
 
