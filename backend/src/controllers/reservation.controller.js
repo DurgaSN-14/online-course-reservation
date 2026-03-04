@@ -1,10 +1,17 @@
 import Reservation from "../models/reservation.model.js";
 import Course from "../models/course.model.js";
+import mongoose from "mongoose";
 
 // Enroll / Reserve Course
 export const reserveCourse = async (req, res) => {
   try {
     const { courseId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({
+        message: "Invalid Course ID",
+      });
+    }
 
     const course = await Course.findById(courseId);
 
@@ -62,10 +69,16 @@ export const getMyReservations = async (req, res) => {
 // Cancel Reservation
 export const cancelReservation = async (req, res) => {
   try {
-    await Reservation.findOneAndDelete({
+    const reservation = await Reservation.findOneAndDelete({
       student: req.user._id,
       course: req.params.courseId,
     });
+
+    if (!reservation) {
+      return res.status(404).json({
+        message: "Reservation not found",
+      });
+    }
 
     res.status(200).json({
       message: "Reservation cancelled",
