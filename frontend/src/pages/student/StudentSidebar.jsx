@@ -17,7 +17,7 @@ const StudentSidebar = () => {
 
   const navItems = [
     { name: "Dashboard", path: "/student/dashboard", icon: LayoutDashboard },
-    { name: "My Courses", path: "/student/my-courses", icon: BookOpen },
+    { name: "My Learning", path: "/student/my-courses", icon: BookOpen },
     { name: "Profile", path: "/student/profile", icon: User },
     { name: "Settings", path: "/student/settings", icon: Settings },
   ];
@@ -112,7 +112,7 @@ const StudentSidebar = () => {
         {/* USER SECTION */}
         <div className="border-t border-white/10 p-4">
           {!collapsed && (
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-2">
               <img
                 src="https://i.pravatar.cc/40"
                 className="w-10 h-10 rounded-full"

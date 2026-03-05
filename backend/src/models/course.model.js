@@ -33,6 +33,12 @@ const courseSchema = new mongoose.Schema(
       required: true,
     },
 
+    learningPoints: [
+      {
+        type: String,
+      },
+    ],
+
     duration: {
       type: String,
       required: true,

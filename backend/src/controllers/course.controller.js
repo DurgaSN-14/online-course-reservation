@@ -1,6 +1,7 @@
 import Course from "../models/course.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import CourseContent from "../models/courseContent.model.js";
+import Reservation from "../models/reservation.model.js";
 import slugify from "slugify";
 import mongoose from "mongoose";
 
@@ -15,6 +16,7 @@ export const createCourse = async (req, res) => {
       fee,
       discount,
       image,
+      learningPoints,
     } = req.body;
 
     if (!title || !description || !category || !duration || !fee) {
@@ -53,6 +55,7 @@ export const createCourse = async (req, res) => {
       finalFee,
       image: imageUrl,
       slug,
+      learningPoints,
     });
 
     res.status(201).json({
@@ -80,6 +83,7 @@ export const updateCourse = async (req, res) => {
       fee,
       discount,
       image,
+      learningPoints,
     } = req.body;
 
     const course = await Course.findById(courseId);
@@ -125,6 +129,7 @@ export const updateCourse = async (req, res) => {
         discount,
         finalFee,
         image: imageUrl,
+        learningPoints,
       },
       { new: true },
     );
@@ -201,9 +206,22 @@ export const getCourseById = async (req, res) => {
       course: course._id,
     }).sort({ order: 1 });
 
+    let purchased = false;
+
+    if (req.user) {
+      const reservation = await Reservation.findOne({
+        student: req.user._id,
+        course: id,
+        status: "active",
+      });
+
+      if (reservation) purchased = true;
+    }
+
     res.status(200).json({
       course,
       contents,
+      purchased,
     });
   } catch (error) {
     console.log("Error in getCourseById: ", error);

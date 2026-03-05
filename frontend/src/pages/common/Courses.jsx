@@ -10,20 +10,32 @@ import {
   ArrowRight,
 } from "lucide-react";
 import coursesData from "../../data/courses.json";
+import { useCourseStore } from "../../store/useCourseStore";
+import { useEffect } from "react";
+import Loader from "../../components/Loader";
+import { Link } from "react-router";
 
 const Courses = () => {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+  const { courses, getAllCourses, isLoading } = useCourseStore();
+
+  useEffect(() => {
+    getAllCourses();
+  }, []);
+
+  const allCourses = [...courses, ...coursesData];
 
   const categories = [
     "All",
-    ...new Set(coursesData.map((course) => course.category)),
+    ...new Set(allCourses.map((course) => course.category)),
   ];
 
-  const filteredCourses = coursesData.filter((course) => {
+  const filteredCourses = allCourses.filter((course) => {
     const matchesSearch =
-      course.title.toLowerCase().includes(search.toLowerCase()) ||
-      course.headline.toLowerCase().includes(search.toLowerCase());
+      course.title?.toLowerCase().includes(search.toLowerCase()) ||
+      course.headline?.toLowerCase().includes(search.toLowerCase()) ||
+      course.description?.toLowerCase().includes(search.toLowerCase());
 
     const matchesCategory = category === "All" || course.category === category;
 
@@ -93,7 +105,9 @@ const Courses = () => {
 
       {/* COURSES GRID */}
       <section className="relative z-10 max-w-7xl mx-auto px-6 pb-28">
-        {filteredCourses.length === 0 ? (
+        {isLoading && <Loader />}
+
+        {!isLoading && filteredCourses.length === 0 ? (
           <div className="text-center py-24 space-y-6">
             <div className="w-20 h-20 mx-auto rounded-full bg-white/5 flex items-center justify-center border border-white/10">
               <Search size={28} className="text-gray-400" />
@@ -106,7 +120,7 @@ const Courses = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
             {filteredCourses.map((course, index) => (
               <motion.div
-                key={course.title}
+                key={course._id || course.title}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
@@ -137,29 +151,29 @@ const Courses = () => {
                   </h3>
 
                   <p className="text-gray-400 text-sm line-clamp-2">
-                    {course.headline}
+                    {course.description}
                   </p>
 
                   {/* Meta */}
                   <div className="grid grid-cols-2 gap-y-4 text-xs text-gray-400">
                     <div className="flex items-center gap-2">
                       <Star size={14} className="text-yellow-400" />
-                      {course.rating.toFixed(1)}
+                      {course.averageRating}
                     </div>
 
                     <div className="flex items-center gap-2">
                       <Users size={14} />
-                      {course.num_subscribers.toLocaleString()}
+                      {course.studentsEnrolled}
                     </div>
 
                     <div className="flex items-center gap-2">
                       <Clock size={14} />
-                      {course.content_info_short}
+                      {course.duration}
                     </div>
 
                     <div className="flex items-center gap-2">
                       <GraduationCap size={14} />
-                      {course.instructional_level_simple}
+                      {course.level}
                     </div>
                   </div>
 
@@ -168,13 +182,15 @@ const Courses = () => {
                   {/* Footer */}
                   <div className="flex justify-between items-center pt-3">
                     <span className="text-purple-400 font-semibold text-lg">
-                      Free
+                      {course.price === 0 ? "Free" : `₹ ${course.finalFee}`}
                     </span>
 
-                    <button className="flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-sm font-medium hover:scale-105 hover:shadow-lg hover:shadow-purple-600/40 transition cursor-pointer">
-                      View
-                      <ArrowRight size={16} />
-                    </button>
+                    <Link to={`/courseoverview/${course._id}`}>
+                      <button className="flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-sm font-medium hover:scale-105 hover:shadow-lg hover:shadow-purple-600/40 transition cursor-pointer">
+                        View
+                        <ArrowRight size={16} />
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </motion.div>

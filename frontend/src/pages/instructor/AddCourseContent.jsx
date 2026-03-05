@@ -390,7 +390,7 @@ const AddCourseContent = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {contents.map((lecture, index) => (
+            {contents?.map((lecture, index) => (
               <motion.div
                 key={lecture._id}
                 initial={{ opacity: 0 }}

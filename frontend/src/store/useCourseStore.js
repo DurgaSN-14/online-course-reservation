@@ -6,7 +6,23 @@ export const useCourseStore = create((set) => ({
   isLoading: false,
   error: null,
   course: null,
+  courses: [],
   contents: [],
+  purchased: false,
+
+  getAllCourses: async () => {
+    try {
+      set({ isLoading: true, error: null });
+      const res = await axiosInstance.get("/courses");
+      set({ courses: res.data, isLoading: false });
+    } catch (error) {
+      set({
+        isLoading: false,
+        error: error.response?.data?.message || "Failed to fetch courses",
+      });
+      toast.error(error.response?.data?.message || "Failed to fetch courses");
+    }
+  },
 
   createCourse: async (courseData) => {
     try {
@@ -71,7 +87,7 @@ export const useCourseStore = create((set) => ({
       const res = await axiosInstance.get(`/course-contents/${courseId}`);
 
       set({
-        contents: res.data,
+        contents: res.data.contents,
         isLoading: false,
       });
     } catch (error) {
@@ -90,6 +106,7 @@ export const useCourseStore = create((set) => ({
       set({
         course: res.data.course,
         contents: res.data.contents,
+        purchased: res.data.purchased,
       });
     } catch (error) {
       toast.error("Failed to load course");
@@ -137,6 +154,69 @@ export const useCourseStore = create((set) => ({
     } catch (error) {
       toast.error("Delete failed");
       return { success: false };
+    }
+  },
+
+  // payments
+  getClientToken: async () => {
+    try {
+      const res = await axiosInstance.get("/payments/token");
+      return res.data.clientToken;
+    } catch (error) {
+      toast.error("Failed to load payment gateway");
+      return null;
+    }
+  },
+
+  reserveCourse: async (courseId) => {
+    try {
+      const res = await axiosInstance.post("/reservations", { courseId });
+      return { success: true, data: res.data };
+    } catch (error) {
+      const message = error.response?.data?.message;
+
+      if (message === "Already enrolled in this course") {
+        return { success: true };
+      }
+
+      toast.error(message || "Reservation failed");
+      return { success: false };
+    }
+  },
+
+  checkoutCourse: async (paymentMethodNonce, courseId) => {
+    try {
+      set({ isLoading: true });
+
+      const res = await axiosInstance.post("/payments/checkout", {
+        paymentMethodNonce,
+        courseId,
+      });
+
+      toast.success("Payment successful!");
+
+      set({ isLoading: false });
+
+      return { success: true, data: res.data };
+    } catch (error) {
+      const message = error.response?.data?.message || "Payment failed";
+
+      toast.error(message);
+
+      set({ isLoading: false });
+
+      return { success: false };
+    }
+  },
+
+  getMyCourses: async () => {
+    try {
+      const res = await axiosInstance.get("/reservations/my");
+      console.log(res.data);
+
+      return res.data;
+    } catch (error) {
+      toast.error("Failed to fetch enrolled courses");
     }
   },
 }));

@@ -1,5 +1,6 @@
 import CourseContent from "../models/courseContent.model.js";
 import Course from "../models/course.model.js";
+import Reservation from "../models/reservation.model.js";
 import cloudinary from "../utils/cloudinary.js";
 
 export const addCourseContent = async (req, res) => {
@@ -143,11 +144,80 @@ export const updateCourseContent = async (req, res) => {
 
 export const getCourseContents = async (req, res) => {
   try {
-    const contents = await CourseContent.find({
-      course: req.params.courseId,
-    }).sort({ order: 1 });
+    const { courseId } = req.params;
 
-    res.status(200).json(contents);
+    let isPurchased = false;
+    let isInstructor = false;
+
+    const course = await Course.findById(courseId);
+
+    if (!course) {
+      return res.status(404).json({
+        message: "Course not found",
+      });
+    }
+
+    // Instructor check
+    if (req.user && course.instructor.toString() === req.user._id.toString()) {
+      isInstructor = true;
+    }
+
+    // Purchased check
+    if (req.user && !isInstructor) {
+      const reservation = await Reservation.findOne({
+        student: req.user._id,
+        course: courseId,
+        status: "active",
+      });
+
+      if (reservation) {
+        isPurchased = true;
+      }
+    }
+
+    let contents;
+
+    if (isInstructor || isPurchased) {
+      // Full lecture list but without file URL
+      contents = await CourseContent.find({ course: courseId })
+        .select("-contentUrl") // hide actual file
+        .sort({ order: 1 });
+    } else {
+      // Only preview lectures
+      contents = await CourseContent.find({
+        course: courseId,
+        isFreePreview: true,
+      })
+        .select("-contentUrl")
+        .sort({ order: 1 });
+    }
+
+    res.status(200).json({
+      purchased: isPurchased,
+      instructor: isInstructor,
+      count: contents.length,
+      contents,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+export const getSingleContent = async (req, res) => {
+  try {
+    const content = await CourseContent.findById(req.params.id);
+
+    if (!content) {
+      return res.status(404).json({
+        message: "Content not found",
+      });
+    }
+
+    res.status(200).json({
+      content,
+    });
   } catch (error) {
     res.status(500).json({
       message: error.message,
