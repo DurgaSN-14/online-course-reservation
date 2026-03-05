@@ -55,6 +55,7 @@ export const getMyReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find({
       student: req.user._id,
+      status: "active",
     }).populate("course");
 
     res.status(200).json(reservations);

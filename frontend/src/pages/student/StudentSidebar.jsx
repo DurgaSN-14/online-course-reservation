@@ -35,7 +35,7 @@ const StudentSidebar = () => {
         {/* Logo */}
         <div className="flex items-center justify-between px-5 py-5 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <Link to="/student/dashboard" className="flex items-center gap-3">
+            <Link to="/courses" className="flex items-center gap-3">
               <BookOpen size={28} className="text-purple-400" />
               {!collapsed && (
                 <h1 className="text-2xl font-extrabold leading-tight bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent">
