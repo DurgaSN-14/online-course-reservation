@@ -11,7 +11,7 @@ import Home from "./pages/common/Home";
 import Signup from "./pages/common/Signup";
 import Login from "./pages/common/Login";
 import Courses from "./pages/common/Courses";
-import CourseOverview from "./pages/common/Courseoverview";
+import CourseOverview from "./pages/common/CourseOverview";
 import About from "./pages/common/About";
 
 import StudentLayout from "./layouts/StudentLayout";
