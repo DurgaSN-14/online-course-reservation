@@ -110,28 +110,28 @@ const Home = () => {
                 </h3>
 
                 <p className="text-gray-400 text-sm line-clamp-2">
-                  {course.headline}
+                  {course.description}
                 </p>
 
                 <div className="grid grid-cols-2 gap-y-3 text-xs text-gray-400">
                   <div className="flex items-center gap-2">
                     <Star size={14} className="text-yellow-400" />
-                    <span>{course.rating.toFixed(1)}</span>
+                    <span>{course.averageRating}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Users size={14} />
-                    <span>{course.num_subscribers.toLocaleString()}</span>
+                    <span>{course.studentsEnrolled}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <Clock size={14} />
-                    <span>{course.content_info_short}</span>
+                    <span>{course.duration}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <GraduationCap size={14} />
-                    <span>{course.instructional_level_simple}</span>
+                    <span>{course.level}</span>
                   </div>
                 </div>
 

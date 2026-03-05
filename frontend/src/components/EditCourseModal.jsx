@@ -9,6 +9,7 @@ const EditCourseModal = ({ course, close, courseId }) => {
   const [form, setForm] = useState({
     title: course.title || "",
     description: course.description || "",
+    learningPoints: course.learningPoints || [],
     category: course.category || "",
     duration: course.duration || "",
     level: course.level || "beginner",
@@ -34,7 +35,11 @@ const EditCourseModal = ({ course, close, courseId }) => {
   };
 
   const handleSubmit = async () => {
-    const res = await updateCourse(courseId, form);
+    const cleaned = {
+      ...form,
+      learningPoints: form.learningPoints.filter((p) => p.trim() !== ""),
+    };
+    const res = await updateCourse(courseId, cleaned);
     if (res.success) close();
   };
 
@@ -109,6 +114,58 @@ const EditCourseModal = ({ course, close, courseId }) => {
               rows="3"
               className={inputStyle}
             />
+          </div>
+
+          {/* LEARNING POINTS */}
+          <div>
+            <label className={labelStyle}>Learning Points</label>
+
+            <div className="space-y-3">
+              {form.learningPoints.map((point, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <input
+                    value={point}
+                    onChange={(e) => {
+                      const updated = [...form.learningPoints];
+                      updated[index] = e.target.value;
+                      setForm({ ...form, learningPoints: updated });
+                    }}
+                    placeholder="Example: Build real world applications"
+                    className={`${inputStyle} flex-1`}
+                  />
+
+                  {/* Remove Button */}
+                  {form.learningPoints.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = form.learningPoints.filter(
+                          (_, i) => i !== index,
+                        );
+                        setForm({ ...form, learningPoints: updated });
+                      }}
+                      className="flex items-center justify-center w-9 h-9 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* ADD BUTTON */}
+            <button
+              type="button"
+              onClick={() =>
+                setForm({
+                  ...form,
+                  learningPoints: [...form.learningPoints, ""],
+                })
+              }
+              className="mt-3 text-sm text-purple-600 font-medium hover:underline cursor-pointer"
+            >
+              + Add Learning Point
+            </button>
           </div>
 
           {/* CATEGORY + DURATION */}

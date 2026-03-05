@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCourseStore } from "../../store/useCourseStore";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, X } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import FormInput from "../../components/FormInput";
@@ -11,6 +11,9 @@ import toast from "react-hot-toast";
 const courseSchema = z.object({
   title: z.string().min(3, "Title required"),
   description: z.string().min(10, "Description too short"),
+  learningPoints: z
+    .array(z.string().min(3, "Point too short"))
+    .min(1, "Add at least one learning point"),
   category: z.string().min(2, "Category required"),
   duration: z.string().min(1, "Duration required"),
   level: z.enum(["Beginner", "Intermediate", "Advanced"]),
@@ -22,6 +25,7 @@ const courseSchema = z.object({
 const CreateCourse = () => {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [learningPoints, setLearningPoints] = useState([""]);
   const { createCourse, isLoading, error } = useCourseStore();
 
   const {
@@ -32,7 +36,7 @@ const CreateCourse = () => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(courseSchema),
-    defaultValues: { level: "Beginner", image: "" },
+    defaultValues: { level: "Beginner", image: "", learningPoints: [""] },
   });
 
   const handleImageChange = (e) => {
@@ -52,6 +56,8 @@ const CreateCourse = () => {
   };
 
   const onSubmit = async (data) => {
+    data.learningPoints = learningPoints.filter((p) => p.trim() !== "");
+
     const res = await createCourse(data);
 
     if (res.success) {
@@ -106,6 +112,68 @@ const CreateCourse = () => {
             {errors.description && (
               <p className="text-xs text-red-500 mt-1">
                 {errors.description.message}
+              </p>
+            )}
+          </div>
+
+          {/* LEARNING POINTS */}
+          <div>
+            <label className="text-sm text-gray-600 font-medium mb-3 block">
+              What will students learn?
+            </label>
+
+            <div className="space-y-3">
+              {learningPoints.map((point, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={point}
+                    onChange={(e) => {
+                      const updated = [...learningPoints];
+                      updated[index] = e.target.value;
+                      setLearningPoints(updated);
+                      setValue("learningPoints", updated);
+                    }}
+                    placeholder="Example: Build full stack applications"
+                    className="flex-1 px-4 py-2 rounded-xl border border-gray-200 focus:border-purple-500 outline-none"
+                  />
+
+                  {/* Remove Button */}
+                  {learningPoints.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = learningPoints.filter(
+                          (_, i) => i !== index,
+                        );
+                        setLearningPoints(updated);
+                        setValue("learningPoints", updated);
+                      }}
+                      className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-500 transition-all duration-200 cursor-pointer"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* ADD BUTTON */}
+            <button
+              type="button"
+              onClick={() => {
+                const updated = [...learningPoints, ""];
+                setLearningPoints(updated);
+                setValue("learningPoints", updated);
+              }}
+              className="mt-3 text-sm text-purple-600 font-medium cursor-pointer hover:underline"
+            >
+              + Add Learning Point
+            </button>
+
+            {errors.learningPoints && (
+              <p className="text-xs text-red-500 mt-2">
+                {errors.learningPoints.message}
               </p>
             )}
           </div>

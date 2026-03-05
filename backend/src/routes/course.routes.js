@@ -1,6 +1,7 @@
 import express from "express";
 import authMiddleware from "../middleware/auth.middleware.js";
 import roleMiddleware from "../middleware/role.middleware.js";
+import optionalAuth from "../middleware/optionalAuth.middleware.js";
 import {
   createCourse,
   updateCourse,
@@ -17,7 +18,7 @@ router.get("/instructor", authMiddleware, getInstructorCourses);
 
 router.get("/", getAllCourses);
 
-router.get("/:id", getCourseById);
+router.get("/:id", optionalAuth, getCourseById);
 
 router.post(
   "/",

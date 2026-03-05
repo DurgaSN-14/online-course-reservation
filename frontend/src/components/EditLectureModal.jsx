@@ -7,14 +7,14 @@ const EditLectureModal = ({ lecture, close }) => {
   const { updateCourseContent } = useCourseStore();
 
   const [form, setForm] = useState({
-    title: lecture.title,
-    description: lecture.description || "",
-    type: lecture.type,
-    contentUrl: lecture.contentUrl,
-    order: lecture.order,
-    maxMarks: lecture.maxMarks,
-    weightage: lecture.weightage,
-    isFreePreview: lecture.isFreePreview,
+    title: lecture?.title || "",
+    description: lecture?.description || "",
+    type: lecture?.type || "video",
+    contentUrl: lecture?.contentUrl || "",
+    order: lecture?.order ?? 1,
+    maxMarks: lecture?.maxMarks ?? 0,
+    weightage: lecture?.weightage ?? 0,
+    isFreePreview: lecture?.isFreePreview ?? false,
   });
 
   const [thumbnail, setThumbnail] = useState(lecture.thumbnail);

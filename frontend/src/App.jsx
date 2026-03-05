@@ -11,16 +11,22 @@ import Home from "./pages/common/Home";
 import Signup from "./pages/common/Signup";
 import Login from "./pages/common/Login";
 import Courses from "./pages/common/Courses";
+import CourseOverview from "./pages/common/Courseoverview";
 import About from "./pages/common/About";
 
+import StudentLayout from "./layouts/StudentLayout";
 import StudentDashboard from "./pages/student/StudentDashboard";
-import InstructorDashboard from "./pages/instructor/InstructorDashboard";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import CreateCourse from "./pages/instructor/CreateCourse";
+import StudentCourses from "./pages/student/StudentCourses";
+import Checkout from "./pages/student/Checkout";
+
 import InstructorLayout from "./layouts/InstructorLayout";
+import InstructorDashboard from "./pages/instructor/InstructorDashboard";
 import InstructorCourses from "./pages/instructor/InstructorCourses";
+import CreateCourse from "./pages/instructor/CreateCourse";
 import AddCourseContent from "./pages/instructor/AddCourseContent";
 import ManageCourse from "./pages/instructor/ManageCourse";
+
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 const App = () => {
   const { checkAuth } = useAuthStore();
@@ -48,17 +54,21 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/courses" element={<Courses />} />
+        <Route path="/courseoverview/:id" element={<CourseOverview />} />
+        <Route path="/checkout/:courseId" element={<Checkout />} />
         <Route path="/about" element={<About />} />
 
         {/* Student Dashboard */}
         <Route
-          path="/student/dashboard"
           element={
             <ProtectedRoute allowedRoles={["student"]}>
-              <StudentDashboard />
+              <StudentLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/student/my-courses" element={<StudentCourses />} />
+        </Route>
 
         {/* Instructor Dashboard */}
         <Route
