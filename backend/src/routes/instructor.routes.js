@@ -8,6 +8,9 @@ import {
   getInstructorEnrollments,
   getInstructorRevenue,
   getInstructorStudents,
+  getNotifications,
+  globalSearch,
+  markNotificationsRead,
 } from "../controllers/instructor.controller.js";
 
 const router = express.Router();
@@ -18,10 +21,18 @@ router.use(authMiddleware, roleMiddleware("instructor"));
 router.get("/revenue", getInstructorRevenue);
 router.get("/enrollments", getInstructorEnrollments);
 router.get("/earnings", getInstructorEarnings);
+
 router.get("/stats", getInstructorDashboardStats);
 router.get("/my-students", getInstructorStudents);
-router.get("/course/:id/students", getCourseStudents);
+router.get("/search", authMiddleware, globalSearch);
+router.get("/notifications", authMiddleware, getNotifications);
+router.patch("/notifications/mark-read", authMiddleware, markNotificationsRead); // Mark all
+router.patch(
+  "/notifications/mark-read/:id",
+  authMiddleware,
+  markNotificationsRead,
+); // Mark one
 
-// Earnings
+router.get("/course/:id/students", getCourseStudents);
 
 export default router;

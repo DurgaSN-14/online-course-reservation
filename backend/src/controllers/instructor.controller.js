@@ -190,3 +190,68 @@ export const getInstructorStudents = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const globalSearch = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const instructorId = req.user._id;
+
+    const courses = await Course.find({
+      instructor: instructorId,
+      title: { $regex: query, $options: "i" },
+    }).limit(5);
+
+    const enrolledStudents = await Reservation.find({ status: "active" })
+      .populate({
+        path: "student",
+        match: { username: { $regex: query, $options: "i" } },
+        select: "username profilePic email",
+      })
+      .populate("course", "title");
+
+    const students = enrolledStudents
+      .filter((e) => e.student !== null)
+      .map((e) => ({
+        id: e.student._id,
+        name: e.student.username,
+        course: e.course.title,
+        image: e.student.profilePic,
+      }))
+      .slice(0, 5);
+
+    res.json({ courses, students });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getNotifications = async (req, res) => {
+  try {
+    const notifications = await Notification.find({ recipient: req.user._id })
+      .sort({ createdAt: -1 })
+      .limit(20);
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const markNotificationsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (id) {
+      await Notification.findByIdAndUpdate(id, { isRead: true });
+    } else {
+      await Notification.updateMany(
+        { recipient: req.user._id },
+        { isRead: true },
+      );
+    }
+
+    res.status(200).json({ message: "Notifications updated" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

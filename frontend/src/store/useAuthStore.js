@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axiosInstance from "../config/axios";
+import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
   user: null,
@@ -61,6 +62,27 @@ export const useAuthStore = create((set) => ({
       // ignore 401
     }
     set({ user: null });
+  },
+
+  updateProfile: async (data) => {
+    try {
+      const res = await axiosInstance.put("/auth/profile", data);
+      set({ user: res.data.user });
+      toast.success("Profile updated!");
+      return true;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Update failed");
+    }
+  },
+
+  changePassword: async (passwords) => {
+    try {
+      await axiosInstance.put("/auth/change-password", passwords);
+      toast.success("Password changed successfully!");
+      return true;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Password change failed");
+    }
   },
 
   // GET PROFILE (refresh user on reload)
